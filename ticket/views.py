@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 
 from user.models import User
+
 from .models import Ticket
 from .serializers import TicketMessageSerializer, TicketSerializer
 
@@ -75,8 +76,6 @@ class TicketMessageCreate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         ticket_object = self.get_queryset()
-
-        ValidationError({'Error': 'Not found or no read permission'})
 
         if ticket_object:
             sender = User.objects.get(id=self.request.user.id)
