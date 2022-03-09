@@ -27,8 +27,8 @@ class UserCreate(generics.CreateAPIView):
 
 class UserRetrieve(generics.RetrieveAPIView):
     """
-    Получить информацию о конкретном пользователе. Доступно для
-    суперюзера и сотрудника поддержки
+    Получить информацию о конкретном пользователе.
+    Доступно для суперюзера и сотрудника поддержки
     """
 
     queryset = User.objects.all()

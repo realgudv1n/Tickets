@@ -1,17 +1,29 @@
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
-from .models import Ticket, TicketMessage
+from user.models import User
+from .models import Ticket
 from .serializers import TicketMessageSerializer, TicketSerializer
 
 
-class TicketListCreate(generics.ListCreateAPIView):
+class TicketCreate(generics.CreateAPIView):
     """
-    Получение и создание заявок. Сотрудник поддержки
-    имеет доступ ко всем созданным заявкам,
-    а обычный пользователь лишь к своим.
+    Создание новой заявки. Доступ имеет каждый авторизованный пользователь
+    """
+
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        applicant = User.objects.get(id=self.request.user.id)
+        serializer.save(applicant=applicant)
+
+
+class TicketList(generics.ListAPIView):
+    """
+    Получение всех заявок. Все заявки видит лишь сотрудник
+    поддержки, а обычный пользователь лишь свои
     """
 
     serializer_class = TicketSerializer
@@ -21,59 +33,54 @@ class TicketListCreate(generics.ListCreateAPIView):
         if self.request.user.is_support:
             return Ticket.objects.all()
 
-        return Ticket.objects.filter(
-            applicant=self.request.user
-        )
-
-    def perform_create(self, serializer):
-        serializer.save(
-            applicant=self.request.user
-        )
+        return Ticket.objects.filter(applicant=self.request.user)
 
 
-class TicketGetMessages(generics.ListCreateAPIView):
+class TicketRetrieve(generics.RetrieveAPIView):
     """
-    Получение всех сообщений в тикете.
-    Доступ к любому тикету имеет сотрудник поддержки,
-    а обычный пользователь лишь к своим тикетам.
+    Получение конкретной заявки. Пользователь имеет доступ лишь к своей,
+    а сотрудник к любой
+    """
+
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.is_support:
+            return Ticket.objects.all()
+
+        return Ticket.objects.filter(applicant=self.request.user)
+
+
+class TicketMessageCreate(generics.CreateAPIView):
+    """
+    Создание сообщения в существующей заявке. Сотрудник имеет возможность
+    записи в любую заявку, пользователь - в свою.
     """
 
     serializer_class = TicketMessageSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.is_support:
-            return TicketMessage.objects.all()
-        return TicketMessage.objects.get(
-            ticket__applicant=self.request.user,
-            ticket_id=self.kwargs['pk']
-        )
+        try:
+            ticket = Ticket.objects.get(id=self.kwargs['pk'])
+        except Ticket.DoesNotExist:
+            ticket = None
+
+        if self.request.user.is_support or \
+                ticket.applicant_id == self.request.user.id:
+            return ticket
+
+        return None
 
     def perform_create(self, serializer):
-        queryset = self.get_queryset()
+        ticket_object = self.get_queryset()
 
-        if Ticket.objects.filter(pk=self.kwargs['pk']).exists():
-            ticket = Ticket.objects.get(pk=self.kwargs['pk'])
+        ValidationError({'Error': 'Not found or no read permission'})
+
+        if ticket_object:
+            sender = User.objects.get(id=self.request.user.id)
+            serializer.save(sender=sender, ticket=ticket_object)
+            ticket_object.save()
         else:
-            raise ValidationError('Not Found.')
-
-        if queryset.exists():
-            ticket.save()
-            serializer.save(
-                ticket_id=self.kwargs['pk'],
-                sender=self.request.user
-            )
-        else:
-            raise ValidationError('Permission denied.')
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = TicketMessageSerializer(
-            queryset,
-            many=True
-        )
-
-        if queryset:
-            return Response(serializer.data)
-
-        return Response(status=403)
+            raise ValidationError({'Error': 'Not found or no permission'})

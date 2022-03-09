@@ -16,11 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from ticket.views import TicketGetMessages, TicketListCreate
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/users/', include('user.urls')),
-    path('api/v1/tickets', TicketListCreate.as_view()),
-    path('api/v1/tickets/<int:pk>', TicketGetMessages.as_view()),
+    path('api/v1/tickets/', include('ticket.urls')),
 ]

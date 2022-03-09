@@ -7,15 +7,8 @@ class TicketMessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TicketMessage
-        read_only_fields = (
-            'sender',
-        )
-        fields = (
-            'id',
-            'text',
-            'sender',
-            'created_at',
-        )
+        read_only_fields = ('sender',)
+        fields = ('id', 'text', 'sender', 'created_at',)
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -23,17 +16,6 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        read_only_fields = (
-            'applicant',
-            'status',
-        )
-        fields = (
-            'id',
-            'title',
-            'description',
-            'applicant',
-            'status',
-            'messages',
-            'created_at',
-            'updated_at',
-        )
+        read_only_fields = ('applicant', 'status',)
+        fields = ('id', 'title', 'description', 'applicant', 'status',
+                  'messages', 'created_at', 'updated_at',)
