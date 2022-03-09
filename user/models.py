@@ -12,6 +12,12 @@ class User(AbstractUser):
         unique=True,
         verbose_name='Имя пользователя',
     )
+    email = models.EmailField(
+        unique=True,
+        blank=False,
+        null=False,
+        verbose_name='Email',
+    )
     is_support = models.BooleanField(
         default=False,
         verbose_name='Сотрудник техподдержки',

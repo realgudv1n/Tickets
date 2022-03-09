@@ -8,3 +8,12 @@ class IsNotAuthenticated(BasePermission):
 
     def has_permission(self, request, view):
         return not request.user.is_authenticated
+
+
+class IsSupportUser(BasePermission):
+    """
+    Разрешить доступ сотруднику поддержки
+    """
+
+    def has_permission(self, request, view):
+        return request.user.is_support
