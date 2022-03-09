@@ -37,10 +37,10 @@ class TicketList(generics.ListAPIView):
         return Ticket.objects.filter(applicant=self.request.user)
 
 
-class TicketRetrieve(generics.RetrieveAPIView):
+class TicketRetrieve(generics.RetrieveUpdateDestroyAPIView):
     """
-    Получение конкретной заявки. Пользователь имеет доступ лишь к своей,
-    а сотрудник к любой
+    Получение конкретной заявки, обновление (только статус), а также удаление.
+    Пользователь имеет доступ лишь к своей, а сотрудник к любой.
     """
 
     serializer_class = TicketSerializer
