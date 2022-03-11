@@ -22,17 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# 'django-insecure-p&_z-0-^_!8c%b\
-#                 (m6_$o34s!zj%+#xp=2-=ytqs718iyt59o_r'
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 AUTH_USER_MODEL = 'user.User'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 # Application definition
 
@@ -130,6 +128,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# STATIC_ROOT = '/code/static/'
 STATIC_URL = 'static/'
 
 # Default primary key field type
@@ -137,7 +140,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
-MAILCHIMP_API_KEY = ''
-MAILCHIMP_USERNAME = ''
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+SMTP_SERVER = os.environ.get('SMTP_SERVER')
+SMTP_PORT = os.environ.get('SMTP_PORT')
+EMAIL_LOGIN = os.environ.get('EMAIL_LOGIN')
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')

@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from user.models import User
 
 from .models import Ticket
-from .serializers import TicketMessageSerializer, TicketSerializer
+from .serializers import (TicketMessageSerializer, TicketSerializer,
+                          TicketUpdateSerializer)
 
 
 class TicketCreate(generics.CreateAPIView):
@@ -37,13 +38,28 @@ class TicketList(generics.ListAPIView):
         return Ticket.objects.filter(applicant=self.request.user)
 
 
-class TicketRetrieve(generics.RetrieveUpdateDestroyAPIView):
+class TicketRetrieve(generics.RetrieveDestroyAPIView):
     """
     Получение конкретной заявки, обновление (только статус), а также удаление.
     Пользователь имеет доступ лишь к своей, а сотрудник к любой.
     """
 
     serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.is_support:
+            return Ticket.objects.all()
+
+        return Ticket.objects.filter(applicant=self.request.user)
+
+
+class TicketUpdate(generics.UpdateAPIView):
+    """
+    Обновление только статуса заявки
+    """
+
+    serializer_class = TicketUpdateSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):

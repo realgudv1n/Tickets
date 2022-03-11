@@ -15,8 +15,7 @@ flake8==4.0.1
 idna==3.3
 isort==5.10.1
 kombu==5.2.4
-mailchimp3==3.0.17
-mccabe==0.7.0
+mccabe==0.6.1
 packaging==21.3
 prompt-toolkit==3.0.28
 psycopg2==2.9.3
@@ -31,4 +30,4 @@ sqlparse==0.4.2
 urllib3==1.26.8
 vine==5.0.0
 wcwidth==0.2.5
-wrapt==1.13.3
+wrapt==1.14.0

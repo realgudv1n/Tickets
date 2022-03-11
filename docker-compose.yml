@@ -1,0 +1,43 @@
+version: "3.9"
+
+volumes:
+ pg_project:
+
+services:
+ redis:
+  image: redis:alpine
+ db:
+  image: postgres
+  volumes:
+   - pg_project:/var/lib/postgresql/data 
+  environment:
+   - POSTGRES_NAME=postgres
+   - POSTGRES_USER=postgres
+   - POSTGRES_PASSWORD=postgres
+ web:
+  build: .
+  command: python manage.py runserver 0.0.0.0:8000
+  volumes:
+   - .:/code
+  ports:
+   - "8000:8000"
+  environment:
+   - POSTGRES_NAME=postgres
+   - POSTGRES_USER=postgres
+   - POSTGRES_PASSWORD=postgres
+   - SECRET_KEY=django-insecure-p&_z-0-^_!8c%b(m6_$o34s!zj%+#xp=2-=ytqs718iyt59o_r
+ celery:
+  build: .
+  command: celery -A stasj worker
+  volumes:
+   - .:/code
+  links:
+   - redis
+  environment:
+   - EMAIL_LOGIN=adsadsad2022@mail.ru
+   - EMAIL_PASSWORD=0Xa7GpL6M1RCnWyRsFtC
+   - SMTP_SERVER=smtp.mail.ru
+   - SMTP_PORT=465
+  depends_on:
+   - web
+   - redis
