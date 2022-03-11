@@ -1,3 +1,5 @@
+import os
+
 """
 Django settings for stasj project.
 
@@ -20,13 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p&_z-0-^_!8c%b\
-                (m6_$o34s!zj%+#xp=2-=ytqs718iyt59o_r'
+# 'django-insecure-p&_z-0-^_!8c%b\
+#                 (m6_$o34s!zj%+#xp=2-=ytqs718iyt59o_r'
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 AUTH_USER_MODEL = 'user.User'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -79,20 +83,13 @@ WSGI_APPLICATION = 'stasj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test_db',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '0.0.0.0',
+        'NAME': os.environ.get('POSTGRES_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': 'db',
         'PORT': '5432',
     }
 }

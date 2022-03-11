@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Ticket, TicketMessage
+from .tasks import send_mail_change_status
 
 
 class TicketMessageSerializer(serializers.ModelSerializer):
@@ -23,6 +24,9 @@ class TicketSerializer(serializers.ModelSerializer):
                   'messages', 'created_at', 'updated_at')
 
     def update(self, instance, validated_data):
-        instance.status = validated_data['status']
-        instance.save()
+        if instance.status != validated_data['status']:
+            instance.status = validated_data['status']
+            instance.save()
+            send_mail_change_status.delay(instance.applicant.email,
+                                          instance.id)
         return instance
