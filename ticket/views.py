@@ -40,7 +40,7 @@ class TicketList(generics.ListAPIView):
 
 class TicketRetrieve(generics.RetrieveDestroyAPIView):
     """
-    Получение конкретной заявки, обновление (только статус), а также удаление.
+    Получение конкретной заявки, а также удаление.
     Пользователь имеет доступ лишь к своей, а сотрудник к любой.
     """
 
