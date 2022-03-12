@@ -10,10 +10,8 @@ services:
   image: postgres
   volumes:
    - pg_project:/var/lib/postgresql/data 
-  environment:
-   - POSTGRES_NAME=postgres
-   - POSTGRES_USER=postgres
-   - POSTGRES_PASSWORD=postgres
+  env_file:
+   - ./variables.env
  web:
   build: .
   command: python manage.py runserver 0.0.0.0:8000
@@ -21,11 +19,10 @@ services:
    - .:/code
   ports:
    - "8000:8000"
-  environment:
-   - POSTGRES_NAME=postgres
-   - POSTGRES_USER=postgres
-   - POSTGRES_PASSWORD=postgres
-   - SECRET_KEY=django-insecure-p&_z-0-^_!8c%b(m6_$o34s!zj%+#xp=2-=ytqs718iyt59o_r
+  env_file:
+   - ./variables.env
+  depends_on:
+   - celery
  celery:
   build: .
   command: celery -A stasj worker
@@ -33,11 +30,7 @@ services:
    - .:/code
   links:
    - redis
-  environment:
-   - EMAIL_LOGIN=adsadsad2022@mail.ru
-   - EMAIL_PASSWORD=0Xa7GpL6M1RCnWyRsFtC
-   - SMTP_SERVER=smtp.mail.ru
-   - SMTP_PORT=465
+  env_file:
+   - ./variables.env
   depends_on:
-   - web
    - redis

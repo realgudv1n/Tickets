@@ -4,6 +4,7 @@ from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(max_length=128, min_length=8)
 
     class Meta:
         model = User
