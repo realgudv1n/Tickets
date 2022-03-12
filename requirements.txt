@@ -11,6 +11,8 @@ click-repl==0.2.0
 Deprecated==1.2.13
 Django==4.0.3
 djangorestframework==3.13.1
+djangorestframework-jwt==1.11.0
+djangorestframework-simplejwt==5.1.0
 flake8==4.0.1
 idna==3.3
 isort==5.10.1
@@ -21,6 +23,7 @@ prompt-toolkit==3.0.28
 psycopg2==2.9.3
 pycodestyle==2.8.0
 pyflakes==2.4.0
+PyJWT==1.7.1
 pyparsing==3.0.7
 pytz==2021.3
 redis==4.1.4
